@@ -11,7 +11,16 @@ const User =mongoose.model('User',new mongoose,Schema
 ));
 
 //signup router
-router.post("/auth/signup",async(req,res)=>
+router.post("/auth/signup",async(req,res)=>{
 const {email.password}=> req.body;
-const existing
-)
+const existingUser=await User.findOne({email});
+if(existingUser){
+    return res.status(400), json({error:"already exist"});
+}
+const hashedPassword =awit bcript.hash([password]);
+const user=new User ({email,password:hashedPassword});
+await user.save();
+const token=jwt.sign({userId:user._id},'secrest',{expireIn:'1h'});
+res.status(200).json({token});
+
+})
