@@ -14,10 +14,13 @@ const cartRoutes = require("./cart");
 app.use(authRoutes);
 app.use(cartRoutes);
 
-mongoose.connect(
-  "mongodb+srv://ishUser:Mc9kHdqN3tue0oQC@ishuser.cv7ahm6.mongodb.net/?retryWrites=true&w=majority&appName=ishUser",
-  { useNewUrlParser: true, useUnifiedTopology: true }
+const MONGODB_URI = mongoose.connect(
+  "mongodb+srv://ishUser:LZq0jL3p7TjYWf24@cluster0.zvuazqc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 );
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => console.log("MongoDB connection success"))
+  .catch((err) => console.log("connection failed:", err.errmsg));
 
 app.get("/products", async (req, res) => {
   try {
@@ -30,7 +33,7 @@ app.get("/products", async (req, res) => {
 
 app.get("/products/:id", async (req, res) => {
   try {
-    const products = await Product.findById(rez.params.id);
+    const products = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({
         message: "the items that you were searching for does not exist",

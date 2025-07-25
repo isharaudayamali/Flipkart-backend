@@ -5,7 +5,7 @@ const router = express.Router();
 const Cart = mongoose.model(
   "Cart",
   new mongoose.Schema({
-    useId: String,
+    userId: String,
     items: [
       {
         productId: String,
@@ -19,7 +19,7 @@ router.post("/cart/add", async (req, res) => {
   try {
     const { productId, quantity = 1, user } = req.body;
 
-    if (!productId || user) {
+    if (!productId || !user) {
       return res
         .status(400)
         .json({ message: "productId and user is required" });
@@ -28,14 +28,14 @@ router.post("/cart/add", async (req, res) => {
     let cart = await Cart.findOne({ userId: user, status: "active" });
 
     if (!cart) {
-      cart = new Cart({ userId: user, item: [], status: "active" });
+      cart = new Cart({ userId: user, items: [], status: "active" });
     }
-    const existingItemIndex = items.findIndex(
-      (items) => productId === productId
+    const existingItemIndex = cart.items.findIndex(
+      (item) => item.productId === productId
     );
 
     if (existingItemIndex > -1) {
-      cart.items[existingItemIndex].quantity = parseInt(quantity);
+      cart.items[existingItemIndex].quantity += parseInt(quantity);
     } else {
       cart.items.push({
         productId,
@@ -55,22 +55,19 @@ router.get("/carts", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      count: cart.length,
+      count: carts.length,
       data: carts,
     });
   } catch (error) {
     console.log("error fetching cart", error);
-    re.status(500).json({
+    res.status(500).json({
       success: false,
-      massege: "failed too fetch data",
-      error: error,
-      message,
+      message: "failed too fetch data",
+      error: error.message,
     });
   }
 });
 
-// router.delete("/cart/:id", async (req, res) => {
-
-// });
+//delete route
 
 module.exports = router;
