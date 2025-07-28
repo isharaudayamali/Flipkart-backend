@@ -14,13 +14,13 @@ const cartRoutes = require("./cart");
 app.use(authRoutes);
 app.use(cartRoutes);
 
-const MONGODB_URI = mongoose.connect(
-  "mongodb+srv://ishUser:LZq0jL3p7TjYWf24@cluster0.zvuazqc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-);
+const MONGODB_URI =
+  "mongodb+srv://User2:User2@cluster0.zvuazqc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
 mongoose
   .connect(MONGODB_URI)
   .then(() => console.log("MongoDB connection success"))
-  .catch((err) => console.log("connection failed:", err.errmsg));
+  .catch((err) => console.log("Connection failed:", err.message));
 
 app.get("/products", async (req, res) => {
   try {
